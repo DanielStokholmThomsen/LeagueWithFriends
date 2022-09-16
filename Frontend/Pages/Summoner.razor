@@ -1,0 +1,75 @@
+﻿@page "/Summoner"
+
+<PageTitle>Summoner</PageTitle>
+
+@using Frontend.Data
+@using LeagueVisualiser.Models
+@inject WeatherForecastService ForecastService
+
+<h1>Summoner data</h1>
+
+<p>Overblik over den bedste spiller blandt gutterne.</p>
+
+@if (summoners == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+        <th>
+            Summoner Name
+        </th>
+        <th>
+            Level
+        </th>
+        <th>
+            Games
+        </th>
+        <th>
+            Ranked Solo Winrate
+        </th>
+        <th>
+            Ranked Solo Rank
+        </th>
+        <th>
+            Ranked Flex Winrate
+        </th>
+        <th>
+            Ranked Flex Rank
+        </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var summoner in summoners)
+            {
+                <tr>
+                    <td>@summoner.name</td>
+                    <td>@summoner.summonerLevel</td>
+                    <td>@summoner.games</td>
+
+                    @if (summoner.soloqwinrate < 50)
+                    {
+                    <td style="color:red">@string.Format("{0:n1}", @summoner.soloqwinrate)%</td>
+                    }else{
+                    <td style="color:green">@string.Format("{0:n1}", @summoner.soloqwinrate)%</td>
+                    }
+                    <td>@summoner.soloqtier @summoner.soloqrank</td>
+                    <td>@string.Format("{0:n1}", @summoner.soloqwinrate)%</td>
+                    <td>@summoner.flextier @summoner.flexqrank</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<RiotSummoner> summoners;
+
+    protected override async Task OnInitializedAsync()
+    {
+        summoners = await ForecastService.GetSummonersAsync();
+    }
+}
